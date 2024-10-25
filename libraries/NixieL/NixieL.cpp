@@ -39,9 +39,9 @@ NixieL::NixieL() {
 		pinMode(_pinAnodes[i], OUTPUT);
 	}
 	
-	pinMode(_pinAdjust[0], INPUT_PULLUP);
-	pinMode(_pinAdjust[1], INPUT_PULLUP);
-	pinMode(_pinAdjust[2], INPUT_PULLUP);
+	for(int i = 0; i < NUMADJUST; i++) {
+		pinMode(_pinAdjust[i], INPUT_PULLUP);
+	}
 	
 	randomSeed(analogRead(0));
 }
@@ -97,84 +97,84 @@ void NixieL::displayTube(int tubeNum, char value) {
 	
 	switch (value) {
 		case '0':
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], LOW);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   LOW);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], LOW);
 			break;                                              
 		case '1':                                               
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], HIGH);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   HIGH);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], LOW);
 			break;                                              
 		case '2':                                               
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], LOW);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   LOW);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], LOW);
 			break;                                              
 		case '3':                                               
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], HIGH);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   HIGH);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], LOW);
 			break;                                              
 		case '4':                                               
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], LOW);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   LOW);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], LOW);
 			break;                                              
 		case '5':                                               
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], HIGH);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   HIGH);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], LOW);
 			break;                                              
 		case '6':                                               
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], LOW);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   LOW);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], LOW);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], LOW);
 			break;		                                        
 		case '7':                                               
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], HIGH);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   HIGH);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], LOW);
 			break;                                              
 		case '8':                                               
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], LOW);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   LOW);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], LOW); 
 			break;                                              
 		case '9':                                               
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], HIGH);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   HIGH);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], LOW);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], LOW);
 			break;                                              
 		case '.':                                               
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], HIGH);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   HIGH);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+4], HIGH);
 			break;
 		default:
-			digitalWrite(_pinValues[chan*(NUMVALUES/2)], HIGH);	
+			digitalWrite(_pinValues[chan*(NUMVALUES/2)],   HIGH);	
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+1], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+2], HIGH);
 			digitalWrite(_pinValues[chan*(NUMVALUES/2)+3], HIGH);
@@ -201,7 +201,11 @@ void NixieL::scramble() {
 	double base = _dutyCycle;
 	
 	for(int i = 0; i < 50; i++) {
-		_displayStr = String(random(10000000,99999999));
+		_displayStr = "";
+		
+		while(_displayStr.length() < NUMTUBES) {
+			_displayStr += randNumChar();
+		}
 
 		if(random(4) == 0) {
 			_dutyCycle = 0.2;
@@ -217,29 +221,39 @@ void NixieL::scramble() {
 }
 
 // Retreive and display time stored on DS3231
-void NixieL::displayTime() {	
+void NixieL::displayTime() {
+	bool adjrollover = false;
+	
 	while(_mode == "time") {
 		byte second, minute, hour, dayOfWeek, dayOfMonth, month, year;
 		readTime(&second, &minute, &hour, &dayOfWeek, &dayOfMonth, &month, &year);
-
+		
+		if(digitalRead(_pinAdjust[0]) == LOW) {
+			break;
+		}
+		
 		// Change time if adjust buttons are activated
-		// Note: analogRead() is used because the Pro Mini pins A6 and A7 cannot digitalRead()
+		// Note: analogRead() is used because the Pro Mini pins A6 and A7 cannot(?) digitalRead()
 		if(analogRead(_pinAdjust[1]) < 1000) {
 			minute += 1;
+			
+			if(minute >= 60) {
+				adjrollover = true;
+				minute = 0;
+			}
+			
 			setTime(0, minute, hour, dayOfWeek, dayOfMonth, month, year);
 			delay(500);
 			
-		} 
-		
-		if(analogRead(_pinAdjust[2]) < 1000) {
+		} else if(analogRead(_pinAdjust[2]) < 1000) {
 			hour += 1;
+			
+			if(hour >= 24) {
+				hour = 0;
+			}
+			
 			setTime(0, minute, hour, dayOfWeek, dayOfMonth, month, year);
 			delay(500);
-		}
-		
-		
-		if(digitalRead(_pinAdjust[0]) != HIGH) {
-			break;
 		}
 		
 		String h = String(hour / 10) + String(hour % 10);
@@ -247,17 +261,22 @@ void NixieL::displayTime() {
 		String s = String(second / 10) + String(second % 10);
 		
 		if(m == "00" && s == "00") {
-			break;
+			if(adjrollover == false) {
+				break;
+			} 
 		} else {
-			_displayStr = h + '.' + m + '.' + s;
-			for(int i = 0; i < 50; i++) {
-				displayTubes();
-			}
+			adjrollover = false;
+		}
+			
+		_displayStr = h + '.' + m + '.' + s;
+		
+		for(int i = 0; i < 50; i++) {
+			displayTubes();
 		}
 	}
 }
 
-// Display a randomly generated 'World Line'.
+// Display a randomly generated 'World Line.'
 void NixieL::displayDemo() {	
 	double base = _dutyCycle;
 	_displayStr = String(random(2)) + '.';
@@ -282,6 +301,9 @@ void NixieL::displayDemo() {
 	}
 	_dutyCycle = base;
 	
+	unsigned long counter = 0;
+	unsigned long target = random(6000000) + random(6000000);
+	
 	while(_mode == "demo") {
 		if(digitalRead(_pinAdjust[0]) == HIGH) {
 			break;
@@ -291,11 +313,15 @@ void NixieL::displayDemo() {
 			break;
 		}
 		
-		if(random(30000) == 0) {
+		if(counter >= target) {
 			break;
+		} else {
+			counter += 1;
 		}
-	
-		displayTubes();
+		
+		for(int i = 0; i < 50; i++) {
+			displayTubes();
+		}
 	}
 }
 
